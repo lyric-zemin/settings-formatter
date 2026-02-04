@@ -2,7 +2,12 @@
   "name": "settings-formatter",
   "displayName": "Settings Formatter",
   "description": "A VSCode extension to format settings files by parameter types with preview functionality",
-  "version": "1.0.0",
+  "version": "0.1.0",
+  "publisher": "lyric-zemin",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lyric-zemin/settings-formatter.git"
+  },
   "engines": {
     "vscode": "^1.74.0"
   },
@@ -64,7 +69,10 @@
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
-    "test": "node ./out/test/runTest.js"
+    "package": "npx vsce package",
+    "publish": "npx vsce publish",
+    "publish-dry-run": "npx vsce publish --dry-run",
+    "verify-package": "npx vsce ls"
   },
   "devDependencies": {
     "@types/glob": "^8.1.0",
@@ -77,6 +85,7 @@
     "eslint": "^8.28.0",
     "glob": "^8.0.3",
     "mocha": "^10.1.0",
-    "typescript": "^4.9.5"
+    "typescript": "^4.9.5",
+    "@vscode/vsce": "^2.19.0"
   }
 }

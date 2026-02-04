@@ -49,7 +49,7 @@ The extension can be configured through VSCode settings:
   "settings-formatter.preserveComments": true,
   "settings-formatter.sortKeys": true,
   "settings-formatter.indentSize": 2,
-  "settings-formatter.categorySeparator": "// ===================="
+  "settings-formatter.categorySeparator": "===================="
 }
 ```
 
@@ -58,7 +58,7 @@ The extension can be configured through VSCode settings:
 - `preserveComments`: Whether to preserve existing comments (default: `true`)
 - `sortKeys`: Whether to sort settings keys alphabetically (default: `true`)
 - `indentSize`: Number of spaces for indentation (default: `2`)
-- `categorySeparator`: String used to separate category blocks (default: `"// ===================="`)
+- `categorySeparator`: String used to separate category blocks (default: `"===================="`)
 
 ## Categories
 
@@ -78,37 +78,69 @@ Settings are automatically categorized into the following groups:
 
 ### Prerequisites
 
-- Node.js (version 16 or higher)
-- VSCode Extension Development tools
+- Node.js (version 16.x or higher)
+- VSCode (version 1.74.0 or higher)
 
 ### Setup
 
 1. Clone the repository
-2. Run `npm install` to install dependencies
-3. Open the project in VSCode
-4. Press `F5` to launch the extension in development mode
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-### Building
-
-```bash
-npm run compile    # Compile TypeScript
-npm run watch      # Watch mode compilation
-npm run lint       # Run ESLint
-```
-
-### Testing
+### Development Scripts
 
 ```bash
-npm test           # Run all tests
+# Compile TypeScript
+npm run compile
+
+# Watch mode
+npm run watch
+
+# Run tests
+npm test
+
+# Lint code
+npm run lint
+
+# Package extension
+npm run package
+
+# Publish extension
+npm run publish
 ```
+
+### Debugging
+
+1. Open the project in VSCode
+2. Press `F5` to launch the extension in debug mode
+3. This opens a new VSCode window with the extension loaded
+
+See [DEBUGGING.md](DEBUGGING.md) for detailed debugging information.
+
+## Publishing
+
+To publish updates to VSCode Marketplace:
+
+1. Update version in `package.json`
+2. Update `CHANGELOG.md`
+3. Run tests and compile
+4. Package and publish:
+   ```bash
+   npm run package
+   npm run publish
+   ```
+
+See [PUBLISHING.md](PUBLISHING.md) for detailed publishing instructions.
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Make your changes
+4. Run tests: `npm test`
+5. Submit a pull request
 
 ## License
 
