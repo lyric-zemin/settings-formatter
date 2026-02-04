@@ -40,7 +40,7 @@ export class SettingsFormatter {
             // 分类设置
             const categorized = this.categorizer.categorize(settings);
             
-            // 格式化设置
+            // 格式化设置（包括类别头）
             const formattedSettings = this.formatCategorizedSettings(categorized);
             
             // 保存格式化后的设置
@@ -81,13 +81,13 @@ export class SettingsFormatter {
                 category.settings.sort((a, b) => a.key.localeCompare(b.key));
             }
 
-            // 添加分类标题作为注释
-            const categoryHeader: SettingItem = {
-                key: `__category_header_${category.categoryName}`,
+            // 添加分类标题作为注释（使用特殊标记以便后续识别）
+            const categoryComment: SettingItem = {
+                key: '__category_comment',
                 value: null,
                 comment: `${this.options.categorySeparator} ${category.categoryName} ${this.options.categorySeparator}`
             };
-            result.push(categoryHeader);
+            result.push(categoryComment);
 
             // 添加该类别的所有设置
             category.settings.forEach(setting => {
@@ -99,64 +99,56 @@ export class SettingsFormatter {
                 }
             });
 
-            // 在类别间添加空行分隔
+            // 在类别间添加空行分隔（使用特殊标记）
             result.push({
-                key: '__empty_line',
+                key: '__category_separator',
                 value: null
             });
         });
 
-        // 移除最后一个空行标记
-        if (result.length > 0 && result[result.length - 1].key === '__empty_line') {
+        // 移除最后一个分隔符
+        if (result.length > 0 && result[result.length - 1].key === '__category_separator') {
             result.pop();
         }
 
-        // 过滤掉特殊标记
-        return result.filter(item => 
-            !item.key.startsWith('__category_header_') && 
-            item.key !== '__empty_line'
-        );
+        return result;
     }
 
     private generatePreviewContent(categorized: CategorizedSettings[]): string {
         let content = '{\n';
         const indent = ' '.repeat(this.options.indentSize);
+        const formattedItems = this.formatCategorizedSettings(categorized);
 
-        categorized.forEach((category, categoryIndex) => {
-            // 添加分类注释
-            content += `${indent}// ${this.options.categorySeparator} ${category.categoryName} ${this.options.categorySeparator}\n`;
-
-            // 对设置进行排序
-            const sortedSettings = this.options.sortKeys 
-                ? [...category.settings].sort((a, b) => a.key.localeCompare(b.key))
-                : category.settings;
-
-            // 添加设置项
-            sortedSettings.forEach((setting, settingIndex) => {
-                // 添加注释
-                if (this.options.preserveComments && setting.comment) {
-                    content += `${indent}// ${setting.comment}\n`;
-                }
-
-                // 添加键值对
-                const valueStr = this.formatValue(setting.value);
-                content += `${indent}"${setting.key}": ${valueStr}`;
-
-                // 添加逗号（如果不是最后一个元素）
-                const isLastSetting = settingIndex === sortedSettings.length - 1;
-                const isLastCategory = categoryIndex === categorized.length - 1;
-                
-                if (!isLastSetting || !isLastCategory) {
-                    content += ',';
-                }
-                
-                content += '\n';
-            });
-
-            // 类别间添加空行（除了最后一个类别）
-            if (categoryIndex < categorized.length - 1) {
-                content += '\n';
+        formattedItems.forEach((item, index) => {
+            // 处理类别注释
+            if (item.key === '__category_comment' && item.comment) {
+                content += `${indent}// ${item.comment}\n`;
+                return;
             }
+
+            // 处理类别分隔符（空行）
+            if (item.key === '__category_separator') {
+                content += '\n';
+                return;
+            }
+
+            // 处理普通设置项
+            // 添加注释
+            if (this.options.preserveComments && item.comment) {
+                content += `${indent}// ${item.comment}\n`;
+            }
+
+            // 添加键值对
+            const valueStr = this.formatValue(item.value);
+            content += `${indent}"${item.key}": ${valueStr}`;
+
+            // 添加逗号（如果不是最后一个元素）
+            const isLastItem = index === formattedItems.length - 1;
+            if (!isLastItem) {
+                content += ',';
+            }
+            
+            content += '\n';
         });
 
         content += '}';

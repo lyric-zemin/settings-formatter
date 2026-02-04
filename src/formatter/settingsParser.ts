@@ -110,17 +110,31 @@ export class SettingsParser {
 
     private formatSettingsForSave(settings: SettingItem[]): string {
         let content = '{\n';
+        const indent = '  '; // 固定2个空格缩进用于保存
         
         settings.forEach((setting, index) => {
+            // 处理类别注释
+            if (setting.key === '__category_comment' && setting.comment) {
+                content += `${indent}// ${setting.comment}\n`;
+                return;
+            }
+            
+            // 处理类别分隔符（空行）
+            if (setting.key === '__category_separator') {
+                content += '\n';
+                return;
+            }
+            
+            // 处理普通设置项
             if (setting.comment) {
-                content += `  // ${setting.comment}\n`;
+                content += `${indent}// ${setting.comment}\n`;
             }
             
             const valueStr = typeof setting.value === 'string' 
                 ? `"${setting.value}"`
                 : JSON.stringify(setting.value, null, 2);
                 
-            content += `  "${setting.key}": ${valueStr}`;
+            content += `${indent}"${setting.key}": ${valueStr}`;
             
             if (index < settings.length - 1) {
                 content += ',';
