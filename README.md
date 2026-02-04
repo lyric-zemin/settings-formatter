@@ -148,4 +148,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Support
 
-If you encounter any issues or have suggestions, please [open an issue](https://github.com/yourusername/settings-formatter/issues) on GitHub.
+If you encounter any issues or have suggestions, please [open an issue](https://github.com/lyric-zemin/settings-formatter/issues) on GitHub.
