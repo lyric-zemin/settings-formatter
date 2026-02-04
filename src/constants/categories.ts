@@ -9,7 +9,8 @@ export const DEFAULT_CATEGORIES: CategoryRule[] = [
         name: "编辑器基础设置",
         patterns: [
             /^editor\./,
-            /^workbench\.editor\./
+            /^workbench\.editor\./,
+            /^diffEditor\./
         ],
         priority: 1
     },

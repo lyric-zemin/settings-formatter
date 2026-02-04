@@ -78,6 +78,23 @@ export class SettingsParser {
     return path.join(workspacePath, '.vscode', 'settings.json')
   }
 
+  /**
+   * 检查是否为分类注释行
+   * @param line 行内容
+   * @returns 是否为分类注释
+   */
+  private isCategoryComment(line: string): boolean {
+    // 匹配各种格式的分类注释
+    const categoryPatterns = [
+      /^\/\/\s*=+\s*[^=]+\s*=+$/, // ======== 分类名称 ========
+      /^\/\/\s*-+\s*[^-]+\s*-+$/, // -------- 分类名称 --------
+      /^\/\/\s*#+\s*[^#]+\s*#+$/, // ######## 分类名称 ########
+      /^\/\/\s*\*+\s*[^*]+\s*\*+$/ // ******** 分类名称 ********
+    ];
+    
+    return categoryPatterns.some(pattern => pattern.test(line.trim()));
+  }
+
   private parseSettingsContent(content: string): {
     settings: SettingItem[]
     rawContent: string
@@ -89,6 +106,11 @@ export class SettingsParser {
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim()
+
+        // 跳过分类注释行和空行分隔符
+        if (this.isCategoryComment(line) || line === '') {
+          continue
+        }
 
         // 处理注释
         if (line.startsWith('//')) {

@@ -46,8 +46,14 @@
         },
         "settings-formatter.categorySeparator": {
           "type": "string",
-          "default": "// ====================",
-          "description": "Separator string for category blocks"
+          "default": "====================",
+          "description": "Separator string for category blocks",
+          "enum": [
+            "====================",
+            "--------------------",
+            "********************",
+            "####################"
+          ]
         }
       }
     }
