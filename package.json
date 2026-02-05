@@ -2,7 +2,7 @@
   "name": "settings-formatter",
   "displayName": "Settings Formatter",
   "description": "A VSCode extension to format settings files by parameter types with preview functionality",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "lyric-zemin",
   "repository": {
     "type": "git",
