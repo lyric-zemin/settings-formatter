@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { SettingsParser, SettingItem } from './settingsParser';
-import { Categorizer, CategorizedSettings } from './categorizer';
 import { CATEGORY_SEPARATOR } from '../constants/categories';
+import { CategorizedSettings, Categorizer } from './categorizer';
+import { SettingItem, SettingsParser } from './settingsParser';
 
 export interface FormatOptions {
     preserveComments: boolean;
@@ -59,7 +59,9 @@ export class SettingsFormatter {
         try {
             const { settings } = await this.parser.getCurrentSettings();
             const categorized = this.categorizer.categorize(settings);
-            return this.generatePreviewContent(categorized);
+            const formattedSettings = this.formatCategorizedSettings(categorized);
+
+            return this.parser.formatSettingsForSave(formattedSettings);
         } catch (error) {
             throw new Error(`Preview generation failed: ${error}`);
         }
@@ -112,56 +114,5 @@ export class SettingsFormatter {
         }
 
         return result;
-    }
-
-    private generatePreviewContent(categorized: CategorizedSettings[]): string {
-        let content = '{\n';
-        const indent = ' '.repeat(this.options.indentSize);
-        const formattedItems = this.formatCategorizedSettings(categorized);
-
-        formattedItems.forEach((item, index) => {
-            // 处理类别注释
-            if (item.key === '__category_comment' && item.comment) {
-                content += `${indent}// ${item.comment}\n`;
-                return;
-            }
-
-            // 处理类别分隔符（空行）
-            if (item.key === '__category_separator') {
-                content += '\n';
-                return;
-            }
-
-            // 处理普通设置项
-            // 添加注释
-            if (this.options.preserveComments && item.comment) {
-                content += `${indent}// ${item.comment}\n`;
-            }
-
-            // 添加键值对
-            const valueStr = this.formatValue(item.value);
-            content += `${indent}"${item.key}": ${valueStr}`;
-
-            // 添加逗号（如果不是最后一个元素）
-            const isLastItem = index === formattedItems.length - 1;
-            if (!isLastItem) {
-                content += ',';
-            }
-            
-            content += '\n';
-        });
-
-        content += '}';
-        return content;
-    }
-
-    private formatValue(value: any): string {
-        if (typeof value === 'string') {
-            return `"${value}"`;
-        } else if (typeof value === 'object' && value !== null) {
-            return JSON.stringify(value, null, this.options.indentSize);
-        } else {
-            return JSON.stringify(value);
-        }
     }
 }

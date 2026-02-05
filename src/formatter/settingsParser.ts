@@ -240,7 +240,7 @@ export class SettingsParser {
     }
   }
 
-  private formatSettingsForSave(settings: SettingItem[]): string {
+  public formatSettingsForSave(settings: SettingItem[]): string {
     let content = '{\n'
     const indent = '  ' // 固定2个空格缩进用于保存
 
