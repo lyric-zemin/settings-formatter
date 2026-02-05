@@ -262,10 +262,7 @@ export class SettingsParser {
         content += `${indent}// ${setting.comment}\n`
       }
 
-      const valueStr =
-        typeof setting.value === 'string'
-          ? `"${setting.value}"`
-          : JSON.stringify(setting.value, null, 2)
+      const valueStr = JSON.stringify(setting.value, null, 2)
 
       content += `${indent}"${setting.key}": ${valueStr}`
 
