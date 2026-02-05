@@ -12,50 +12,8 @@
         "${workspaceFolder}/out/**/*.js"
       ],
       "preLaunchTask": "npm: compile",
-      "stopOnEntry": false,
       "internalConsoleOptions": "openOnSessionStart",
       "runtimeExecutable": "${execPath}",
-      "manageDebuggerProcess": true,
-      "logging": {
-        "engineLogging": false
-      }
     },
-    {
-      "name": "Extension Tests",
-      "type": "extensionHost",
-      "request": "launch",
-      "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
-      ],
-      "outFiles": [
-        "${workspaceFolder}/out/test/**/*.js"
-      ],
-      "preLaunchTask": "npm: compile",
-      "stopOnEntry": false,
-      "internalConsoleOptions": "openOnSessionStart",
-      "runtimeExecutable": "${execPath}",
-      "manageDebuggerProcess": true
-    },
-    {
-      "name": "Debug Unit Tests",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceFolder}/out/test/simpleTest.js",
-      "outFiles": [
-        "${workspaceFolder}/out/**/*.js"
-      ],
-      "preLaunchTask": "npm: compile",
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen"
-    },
-    {
-      "name": "Attach to Extension Host",
-      "type": "extensionHost",
-      "request": "attach",
-      "port": 9229,
-      "timeout": 10000,
-      "continueOnAttach": true
-    }
   ]
 }

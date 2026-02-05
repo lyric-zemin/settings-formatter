@@ -1,11 +1,10 @@
 {
-  "typescript.preferences.includePackageJsonAutoImports": "auto",
-  "typescript.suggest.autoImports": true,
-  "typescript.updateImportsOnFileMove.enabled": "always",
-  "editor.formatOnSave": false,
+  // ==================== 编辑器基础设置 ====================
   "editor.codeActionsOnSave": {
-    "source.organizeImports": true
+    "source.organizeImports": "explicit"
   },
+  "editor.formatOnSave": false,
+  // ==================== 文件和搜索设置 ====================
   "files.exclude": {
     "**/node_modules": true,
     "**/.git": true,
@@ -19,7 +18,10 @@
     "**/out": true,
     "**/.git": true
   },
+  // ==================== 调试设置 ====================
   "debug.javascript.autoAttachFilter": "disabled",
-  "extensions.autoUpdate": false,
-  "extensions.autoCheckUpdates": false
+  // ==================== 其他设置 ====================
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always"
 }

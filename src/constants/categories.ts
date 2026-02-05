@@ -68,4 +68,4 @@ export const DEFAULT_CATEGORIES: CategoryRule[] = [
     }
 ];
 
-export const CATEGORY_SEPARATOR = "// ====================";
+export const CATEGORY_SEPARATOR = "====================";
