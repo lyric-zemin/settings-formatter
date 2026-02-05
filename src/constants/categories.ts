@@ -67,5 +67,3 @@ export const DEFAULT_CATEGORIES: CategoryRule[] = [
         priority: 8
     }
 ];
-
-export const CATEGORY_SEPARATOR = "====================";

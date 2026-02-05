@@ -141,13 +141,13 @@ export class SettingsParser {
               // 收集多行直到找到匹配的结束括号
               let fullLines = [valueStr]
               let j = i + 1
-              let bracketCount = this.countUnmatchedBrackets(valueStr)
+              let bracketCount = this.countBrackets(valueStr)
 
               while (j < lines.length && bracketCount > 0) {
                 const nextLine = lines[j].trim()
                 if (nextLine && !nextLine.startsWith('//')) {
                   fullLines.push(nextLine)
-                  bracketCount += this.countBracketChanges(nextLine)
+                  bracketCount += this.countBrackets(nextLine)
                 }
                 j++
               }
@@ -189,29 +189,16 @@ export class SettingsParser {
     }
   }
 
-  // 计算未匹配的括号数量
-  private countUnmatchedBrackets(str: string): number {
+  /**
+   * 计算字符串中括号的净变化量（开括号减去闭括号）
+   * @param str 要计算的字符串
+   * @returns 括号净变化量
+   */
+  private countBrackets(str: string): number {
     let open = 0
     let close = 0
 
     for (const char of str) {
-      if (char === '{' || char === '[') {
-        open++
-      }
-      if (char === '}' || char === ']') {
-        close++
-      }
-    }
-
-    return open - close
-  }
-
-  // 计算一行中括号的变化量
-  private countBracketChanges(line: string): number {
-    let open = 0
-    let close = 0
-
-    for (const char of line) {
       if (char === '{' || char === '[') {
         open++
       }

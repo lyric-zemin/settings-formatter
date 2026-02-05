@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { CATEGORY_SEPARATOR } from '../constants/categories';
 import { CategorizedSettings, Categorizer } from './categorizer';
 import { SettingItem, SettingsParser } from './settingsParser';
+import { ConfigManager, SettingsFormatterConfig } from '../utils/configManager';
 
 export interface FormatOptions {
     preserveComments: boolean;
@@ -13,26 +13,55 @@ export interface FormatOptions {
 export class SettingsFormatter {
     private parser: SettingsParser;
     private categorizer: Categorizer;
-    private options: FormatOptions;
+    private configManager: ConfigManager;
+    private options!: FormatOptions; // 使用 definite assignment assertion
 
     constructor(options?: Partial<FormatOptions>) {
         this.parser = new SettingsParser();
         this.categorizer = new Categorizer();
+        this.configManager = ConfigManager.getInstance();
         
+        // 初始化默认配置
+        this.loadConfiguration();
+        
+        // 如果传入了自定义选项，则合并
+        if (options) {
+            this.options = { ...this.options, ...options };
+        }
+    }
+
+    /**
+     * 从配置管理器加载配置
+     */
+    private loadConfiguration(): void {
+        const config = this.configManager.getAllConfig();
         this.options = {
-            preserveComments: true,
-            sortKeys: true,
-            indentSize: 2,
-            categorySeparator: CATEGORY_SEPARATOR,
-            ...options
+            preserveComments: config.preserveComments,
+            sortKeys: config.sortKeys,
+            indentSize: config.indentSize,
+            categorySeparator: config.categorySeparator
         };
+
+        // 监听配置变化
+        this.configManager.onConfigChange((newConfig) => {
+            this.options = {
+                preserveComments: newConfig.preserveComments,
+                sortKeys: newConfig.sortKeys,
+                indentSize: newConfig.indentSize,
+                categorySeparator: newConfig.categorySeparator
+            };
+        });
+    }
+
+    /**
+     * 更新配置（供外部调用）
+     */
+    public async updateConfiguration(updates: Partial<SettingsFormatterConfig>): Promise<void> {
+        await this.configManager.updateConfigs(updates);
+        // 配置变化会通过监听器自动更新this.options
     }
 
     public async formatCurrentSettings(): Promise<void> {
-        // 获取当前配置
-        const config = vscode.workspace.getConfiguration('settings-formatter');
-        this.updateOptionsFromConfig(config);
-
         try {
             // 解析当前设置
             const { settings } = await this.parser.getCurrentSettings();
@@ -53,9 +82,6 @@ export class SettingsFormatter {
     }
 
     public async getFormattedPreview(): Promise<string> {
-        const config = vscode.workspace.getConfiguration('settings-formatter');
-        this.updateOptionsFromConfig(config);
-
         try {
             const { settings } = await this.parser.getCurrentSettings();
             const categorized = this.categorizer.categorize(settings);
@@ -65,13 +91,6 @@ export class SettingsFormatter {
         } catch (error) {
             throw new Error(`Preview generation failed: ${error}`);
         }
-    }
-
-    private updateOptionsFromConfig(config: vscode.WorkspaceConfiguration): void {
-        this.options.preserveComments = config.get('preserveComments', true);
-        this.options.sortKeys = config.get('sortKeys', true);
-        this.options.indentSize = config.get('indentSize', 2);
-        this.options.categorySeparator = config.get('categorySeparator', CATEGORY_SEPARATOR);
     }
 
     private formatCategorizedSettings(categorized: CategorizedSettings[]): SettingItem[] {
@@ -115,4 +134,12 @@ export class SettingsFormatter {
 
         return result;
     }
+
+    /**
+     * 获取当前配置状态
+     */
+    public getCurrentOptions(): Readonly<FormatOptions> {
+        return { ...this.options };
+    }
+
 }
